@@ -36,7 +36,7 @@
     
 """
 
-__version__ = '0.6'
+__version__ = '0.6.5'
 
 import gtk
 import os
