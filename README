@@ -1,0 +1,16 @@
+PinnwandIconCreator
+==================
+
+Ein kleine Tool zum erstellen von Einträgen auf der Pinnwand des Wetabs.
+
+
+Installation
+------------
+Es ist keine Installation nötig. 
+
+Programm starten
+----------------
+Das Programm wird über die Datei main.py gestartet. Es kann auch ein Pinnnwandeintrag
+erstellt werden der diese Datei aufruft.
+
+
