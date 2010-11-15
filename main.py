@@ -24,13 +24,13 @@
         + Widget hinzugefügt
           
     TODO:
-        +neues Icon hinzufügen
+   done +neues Icon hinzufügen
         +Fehler beim kopieren abfangen und an Benutzer durchgeben
-        +name der Icondatei an den namen der *.desktop datei anpassen
+   done +name der Icondatei an den namen der *.desktop datei anpassen
         +Hilfetext erweitern: Pinnwand kann nicht mit Leerzeichzen umgehen
-        +überprüfen ob Befehl im Path existiert:
-         http://wetab-community.de/forum/viewtopic.php?f=64&t=1036&start=40#p16755
-         (Wenn man das Binary ohne Pfad angibt kommt immer die nervige Warnung.
+   done +überprüfen ob Befehl im Path existiert:
+          http://wetab-community.de/forum/viewtopic.php?f=64&t=1036&start=40#p16755
+          (Wenn man das Binary ohne Pfad angibt kommt immer die nervige Warnung.
           Man könnte auch mit "which" vorher noch testen ob das Programm im 
           Pfad liegt und dann die Warnung unterdrücken.)
     
@@ -43,6 +43,7 @@ import os
 import shutil
 import subprocess
 
+DEBUG = True
 
 HOMEFOLDER = os.path.expanduser('~')
 PINFOLDER = os.path.join(HOMEFOLDER,
@@ -99,7 +100,7 @@ def dialog_restart_pinn():
     return temp
 
 
-def check_in_path(script):
+def check_in_path_old(script):
     """
         wenn Kein pfad zu einem Gültigen Script eingeben wurde besteht immer
         noch die Möglichkeit das ein Programm aus dem $PATH gestartet werden soll
@@ -120,6 +121,25 @@ def check_in_path(script):
        temp = False
     dlg.destroy()
     return temp
+
+def check_in_path(script):
+    """
+        wenn Kein pfad zu einem Gültigen Script eingeben wurde besteht immer
+        noch die Möglichkeit das ein Programm aus dem $PATH gestartet werden soll
+    """
+    print script
+    try:
+        executable, arg = script.split(' ')                
+        # -> es wurde kein Argument mitgegeben        
+    except ValueError:
+                executable = script
+    p = subprocess.Popen(['which', executable])
+    p.communicate()
+    if p.returncode == 0:
+        return True
+    return False
+
+                
 
 def display_message(title, message):
     dlg = gtk.MessageDialog(type=gtk.MESSAGE_INFO,
@@ -150,16 +170,24 @@ def check_valid(script, image, entry_name):
 def create_entry(script, image, entry_name):
     """
         Eintrag auf der Pinnwand erstellen
-        -> Bild Kopieren
+        -> Bild Kopieren -> an entry_name anpassen
         -> *.desktop Datei erstellen
     """
     shutil.copy(image, PINFOLDER)
+    image_old = os.path.join(PINFOLDER, os.path.split(image)[1])
+    image_new = os.path.join(PINFOLDER, entry_name+'.png')
+    print image_old
+    print image_new
+    os.rename(image_old, image_new)
+    
+    
+    os.path
     
     file_name = '.'.join([entry_name, 'desktop'])
     with open(os.path.join(PINFOLDER, file_name), 'w') as f:
         f.write('[Desktop%20Entry]\n')
         f.write('Type=Application\n')
-        f.write(''.join(['Icon=', os.path.basename(image), '\n']))
+        f.write(''.join(['Icon=', os.path.basename(image_new), '\n']))
         f.write(''.join(['Exec="', script, '"\n']))
         f.close()
 
@@ -228,7 +256,7 @@ class MyGUI(object):
             kein Eintrag angelegt wurde
             danach kopieren der png-Datei und erstellen des 
             Pinnwandeintrags
-        """
+        """ 
         result = check_valid(self.entry1.get_text(),
                              self.entry2.get_text(),
                              self.entry3.get_text())
