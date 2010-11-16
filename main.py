@@ -173,15 +173,11 @@ def create_entry(script, image, entry_name):
         -> Bild Kopieren -> an entry_name anpassen
         -> *.desktop Datei erstellen
     """
+    
     shutil.copy(image, PINFOLDER)
     image_old = os.path.join(PINFOLDER, os.path.split(image)[1])
     image_new = os.path.join(PINFOLDER, entry_name+'.png')
-    print image_old
-    print image_new
     os.rename(image_old, image_new)
-    
-    
-    os.path
     
     file_name = '.'.join([entry_name, 'desktop'])
     with open(os.path.join(PINFOLDER, file_name), 'w') as f:
