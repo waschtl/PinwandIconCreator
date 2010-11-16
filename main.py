@@ -27,7 +27,7 @@
    done +neues Icon hinzufügen
         +Fehler beim kopieren abfangen und an Benutzer durchgeben
    done +name der Icondatei an den namen der *.desktop datei anpassen
-        +Hilfetext erweitern: Pinnwand kann nicht mit Leerzeichzen umgehen
+   done +Hilfetext erweitern: Pinnwand kann nicht mit Leerzeichzen umgehen
    done +überprüfen ob Befehl im Path existiert:
           http://wetab-community.de/forum/viewtopic.php?f=64&t=1036&start=40#p16755
           (Wenn man das Binary ohne Pfad angibt kommt immer die nervige Warnung.
@@ -99,29 +99,6 @@ def dialog_restart_pinn():
     dlg.destroy()
     return temp
 
-
-def check_in_path_old(script):
-    """
-        wenn Kein pfad zu einem Gültigen Script eingeben wurde besteht immer
-        noch die Möglichkeit das ein Programm aus dem $PATH gestartet werden soll
-        vorerst wird der Benutzer einfach danach gefragt.
-        TODO: selber im Programm überprüfen
-    """
-    dlg = gtk.MessageDialog(type=gtk.MESSAGE_QUESTION,
-                             message_format='kein gültiger Pfad',
-                             buttons=gtk.BUTTONS_YES_NO)
-     
-    dlg.format_secondary_text('es wurde kein gültiger Pfad für das script angegeben.\
- Ist das Script im Path eingetragen und soll fortgefahren werden?')
-    result = dlg.run()
-
-    if result == gtk.RESPONSE_YES:
-       temp = True
-    else:
-       temp = False
-    dlg.destroy()
-    return temp
-
 def check_in_path(script):
     """
         wenn Kein pfad zu einem Gültigen Script eingeben wurde besteht immer
@@ -138,10 +115,11 @@ def check_in_path(script):
     if p.returncode == 0:
         return True
     return False
-
                 
-
 def display_message(title, message):
+    """
+        Nachricht in Modalem Dialog dem benutzer Anzeigen
+    """
     dlg = gtk.MessageDialog(type=gtk.MESSAGE_INFO,
                             buttons=gtk.BUTTONS_OK,
                             message_format=title)
@@ -170,7 +148,7 @@ def check_valid(script, image, entry_name):
 def create_entry(script, image, entry_name):
     """
         Eintrag auf der Pinnwand erstellen
-        -> Bild Kopieren -> an entry_name anpassen
+        -> Bild Kopieren -> Dateiname an entry_name anpassen
         -> *.desktop Datei erstellen
     """
     
@@ -260,6 +238,7 @@ class MyGUI(object):
         if result[0] == False:
             #bei ungültigem Pfad kann das Script immer noch im Path stehen und 
             #trotzdem funktionieren
+                    #TODO: nicht über string lösen...
             if result[1] == 'kein Gültiger Pfad für zu startendes Script angegeben':
                 if check_in_path(self.entry1.get_text()) == True:
                     result = True, True
@@ -292,14 +271,16 @@ class MyGUI(object):
     def on_button7_clicked(self, *args):
         """
             Hilfe einblenden
-        """
-        msg = ''.join(['Zu startendes Skript über "Datei suchen" eingeben oder per Hand ',
-                       'eingeben. Grundsätzlich sind alle Befehle die in der Shell ',
-                       'möglich sind gültig.\n',
-                       'Die Icondatei muss im png-Format vorliegen und sollte eine Größe von'
-                       '168x105 pixeln haben.\n',
-                       'Der Name des Eintrages kann frei gewählt werden darf aber keine ',
-                       'Sonderzeichen und Leerzeichen enthalten.'
+        """        
+        msg = ''.join(['Das zu startende Skript über "Datei suchen" eingeben oder per Hand',
+                       ' eingeben. Grundsätzlich sind alle Befehle die in der Shell möglich',
+                       ' sind gültig. Nicht benutzt werden dürfen Umlaute Leerzeichen und',
+                       ' andere Sonderzeichen.\n\n',
+                       'Die Icondatei muss im png-Format vorliegen und sollte in einer Größe',
+                       ' von 168x105 pixeln vorliegen.\n\n',
+                       'Der Name des Eintrages kann frei gewählt werden, muss einmalig sein'
+                       ' und darf keine Umlaute, Sonderzeichen oder Leerzeichen enthalten.\n',
+                       'Für Ausführlichere Hilfe bitte die Datei README lesen'
                        ])
         display_message('Hilfe zum Iconcreator', msg)
     
