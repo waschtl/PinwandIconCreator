@@ -22,21 +22,19 @@
         + neustarten der Pinnwand durch 'killall tiitoo-pinnwand'
         + testen des Programmaufrufs per GUI möglich
         + Widget hinzugefügt
-          
-    TODO:
-   done +neues Icon hinzufügen
-        +Fehler beim kopieren abfangen und an Benutzer durchgeben
-   done +name der Icondatei an den namen der *.desktop datei anpassen
-   done +Hilfetext erweitern: Pinnwand kann nicht mit Leerzeichzen umgehen
-   done +überprüfen ob Befehl im Path existiert:
-          http://wetab-community.de/forum/viewtopic.php?f=64&t=1036&start=40#p16755
-          (Wenn man das Binary ohne Pfad angibt kommt immer die nervige Warnung.
-          Man könnte auch mit "which" vorher noch testen ob das Programm im 
-          Pfad liegt und dann die Warnung unterdrücken.)
     
+    ver 0.7 (17.11.2010)
+        + neues Icon mit ausliefern
+        + Name der Icondatei wird an den Namen der *.desktop Datei angepasst
+        + Hilfetext erweitert
+        + testen ob Befehl im %PATH% existiert durch Programm/ Benutzerabfrage entfällt
+    TODO:
+        + Fehler beim kopieren abfangen und an Benutzer durchgeben
+        + Dokumentation der Funktionen/Methoden aufräumen
+
 """
 
-__version__ = '0.6.5'
+__version__ = '0.7'
 
 import gtk
 import os
@@ -130,6 +128,7 @@ def display_message(title, message):
 def check_valid(script, image, entry_name):
     """
         überprüfen ob die eingegeben Daten gültig sind
+        TODO: Rückgabeparameter ändern (wenigstens keine Strings)
     """
     if entry_name == "":
         return False, 'kein gültiger Name für Eintrag angegeben'
@@ -151,8 +150,9 @@ def create_entry(script, image, entry_name):
         -> Bild Kopieren -> Dateiname an entry_name anpassen
         -> *.desktop Datei erstellen
     """
-    
+        #TODO: Fehler abfrangen und an Benutzer durchreichen
     shutil.copy(image, PINFOLDER)
+    
     image_old = os.path.join(PINFOLDER, os.path.split(image)[1])
     image_new = os.path.join(PINFOLDER, entry_name+'.png')
     os.rename(image_old, image_new)

@@ -1,16 +1,50 @@
-PinnwandIconCreator
-==================
+# -*- coding: utf-8 -*-
 
-Ein kleine Tool zum erstellen von Einträgen auf der Pinnwand des Wetabs.
+Ein kleines Tool zum erstellen von Einträgen auf der Pinnwand des WeTabs.
 
+Fragen und Diskussion unter:
+http://wetab-community.de/forum/viewtopic.php?f=64&t=1036&start=0
 
 Installation
 ------------
-Es ist keine Installation nötig. 
+Wenn das Archiv bereits entpackt wurde und dieser Text gelesen werden kann
+ist keine weitere Installation nötig.
 
 Programm starten
 ----------------
-Das Programm wird über die Datei main.py gestartet. Es kann auch ein Pinnnwandeintrag
-erstellt werden der diese Datei aufruft.
+Das Programm wird durch die Datei 'main.py' im Programmverzeichnis gestartet. 
+Es kann auch ein Pinnnwandeintrag erstellt werden der diese Datei aufruft.
+Näheres dazu unter: 
+http://daswetabblog.de/tipps-und-tricks/eigene-widgets-auf-die-pinnwand-legen-mit-screencast/
+
+
+Bedienung
+---------
+Für einen neuen Eintrag auf der Pinnwand werden 3 Informationen benötigt.
+
+1. ein zu startendes Skript oder Programm.
+Das zu startende Programm oder Skript kann über den Button 'Datei suchen' gesucht werden oder aber per Hand eingegeben werden. Generell sind hier alle Befehle die in der Shell möglich sind Gültig. Lediglich die Verwendung von Umlauten, Leerzeichen und Sonderzeichen bereitet der Pinnwand Probleme. So kann es passieren das ein Aufruf über den Button 'Programmaufruf testen' zwar Funktioniert, aber ein Aufruf über die Pinnwand fehlschlägt. Der Programmaufruf kann über den Button 'Programmaufruf testen' überprüft werden. Die Rückgabe des Programmaufrufs wird anschließend dem Benutzer ausgegeben.
+Es ist ebenfalls möglich dem Aufruf von Programmen Parameter mitzugeben. 
+
+2. Ein Icon
+Die Icons die verwendet werden sollen müssen im png- Format vorliegen und sollten eine Maximale größte von 186x105 Pixel nicht überschreiten. Die Icons können ebenfalls über den Button 'Datei suchen' im Dateisystem gesucht werden oder direkt in die Eingabezeile eingetragen werden.
+
+3. Name für den Desktopeintrag
+Für jeden Desktopeintrag wird eine separate Datei in dem Verzeichnis
+home/<user>/.appdata/tiitoo-pinnwand/tiitoo-localbookmarks/
+angelegt. Über dieses Feld wird der Name dieser Datei festgelegt. Jeder Dateiname muss einmalig sein, soll keine Sonderzeichen, Leerzeichen oder Sonderzeichen enthalten.
+
+sind alle Informationen zusammengetragen kann ein neuer Eintrag mit dem Button 'Eintrag auf Pinnwand erstellen' angelegt werden.
+
+
+
+
+changelog
+---------
+v 0.7:
+    + neues Icon mit ausliefern
+    + Name der Icondatei wird an den Namen der *.desktop Datei angepasst
+    + Hilfetext erweitert
+    + testen ob Befehl im %PATH% existiert durch Programm/ Benutzerabfrage entfällt
 
 

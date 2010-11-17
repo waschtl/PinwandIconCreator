@@ -36,7 +36,7 @@
                     <child>
                       <object class="GtkLabel" id="label4">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">zu startendes Programm oder Script angeben</property>
+                        <property name="label" translatable="yes">zu startendes Programm oder Skript angeben</property>
                       </object>
                       <packing>
                         <property name="position">1</property>
