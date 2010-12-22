@@ -6,7 +6,6 @@
 # and/or modify it under the terms of the Do What The Fuck You Want
 # To Public License, Version 2, as published by Sam Hocevar. See
 # http://sam.zoy.org/wtfpl/COPYING for more details.
-
 """
     Automatisches erstellen von Pinwandlinks für das WeTab
     ver 0.4 (29.10.2010)
@@ -28,26 +27,34 @@
         + Name der Icondatei wird an den Namen der *.desktop Datei angepasst
         + Hilfetext erweitert
         + testen ob Befehl im %PATH% existiert durch Programm/ Benutzerabfrage entfällt
+        
+    ver 0.8 (18.12.2010)
+        + Option für start mit dem Gameframe hinzugefügt
+        
     TODO:
         + Fehler beim kopieren abfangen und an Benutzer durchgeben
-        + Dokumentation der Funktionen/Methoden aufräumen
-
+        + Programmaufruf mit gameframe testen
 """
 
-__version__ = '0.7'
+__version__ = '0.8'
 
 import gtk
 import os
 import shutil
 import subprocess
 
-DEBUG = True
-
 HOMEFOLDER = os.path.expanduser('~')
 PINFOLDER = os.path.join(HOMEFOLDER,
                          '.appdata/tiitoo-pinnwand/tiitoo-localbookmarks/')
 APPDIR = os.path.dirname(os.path.abspath(__file__))
 GUI_FILE = os.path.join(APPDIR,'GUI.glade')
+
+CHECKVALID_MESSAGES = {0: True,
+                       1: 'kein gültiger Name für Eintrag angegeben',
+                       2: 'Pinnwandeintrag mit diesem Namen existiert bereits',
+                       3: 'kein Gültiger Pfad für zu verwendendes Bild angegeben',
+                       4: 'keine png-Datei als Bild angegeben',
+                       5: 'kein Gültiger Pfad für zu startendes Skript angegeben'}
 
 def get_file(folder, filter, text):
     """
@@ -102,14 +109,14 @@ def check_in_path(script):
         wenn Kein pfad zu einem Gültigen Script eingeben wurde besteht immer
         noch die Möglichkeit das ein Programm aus dem $PATH gestartet werden soll
     """
-    print script
     try:
         executable, arg = script.split(' ')                
         # -> es wurde kein Argument mitgegeben        
     except ValueError:
                 executable = script
     p = subprocess.Popen(['which', executable])
-    p.communicate()
+    stdout, _ = p.communicate()
+    print stdout
     if p.returncode == 0:
         return True
     return False
@@ -128,23 +135,22 @@ def display_message(title, message):
 def check_valid(script, image, entry_name):
     """
         überprüfen ob die eingegeben Daten gültig sind
-        TODO: Rückgabeparameter ändern (wenigstens keine Strings)
     """
     if entry_name == "":
-        return False, 'kein gültiger Name für Eintrag angegeben'
+        return 1
     file_name = '.'.join([entry_name, 'desktop'])
     if os.path.exists(os.path.join(PINFOLDER, file_name)):
-        return False, 'Pinnwandeintrag mit diesem Namen existiert bereits'
+        return 2
     if os.path.exists(image) == False:
-        return False, 'kein Gültiger Pfad für zu verwendendes Bild angegeben'
+        return 3
     if os.path.basename(image).split('.')[1] != 'png':
-        return False, 'keine png-Datei als Bild angegeben'
+        return 4
     if os.path.exists(script) == False:
-        return False, 'kein Gültiger Pfad für zu startendes Script angegeben'
-    return True, True
+        return 5
+    return 0
+
     
-    
-def create_entry(script, image, entry_name):
+def create_entry(script, image, entry_name, gameframe):
     """
         Eintrag auf der Pinnwand erstellen
         -> Bild Kopieren -> Dateiname an entry_name anpassen
@@ -162,7 +168,10 @@ def create_entry(script, image, entry_name):
         f.write('[Desktop%20Entry]\n')
         f.write('Type=Application\n')
         f.write(''.join(['Icon=', os.path.basename(image_new), '\n']))
-        f.write(''.join(['Exec="', script, '"\n']))
+        if gameframe:
+            f.write(''.join(['Exec="tiitoo-gameframe -bin ', script, '"\n']))
+        else:
+            f.write(''.join(['Exec="', script, '"\n']))
         f.close()
 
 
@@ -176,6 +185,7 @@ class MyGUI(object):
         self.entry1 = self.builder.get_object('entry1')
         self.entry2 = self.builder.get_object('entry2')
         self.entry3 = self.builder.get_object('entry3')
+        self.checkbutton_gameframe = self.builder.get_object('checkbutton1')
         
         self.create_filters()
         
@@ -234,24 +244,20 @@ class MyGUI(object):
         result = check_valid(self.entry1.get_text(),
                              self.entry2.get_text(),
                              self.entry3.get_text())
-        
-        if result[0] == False:
-            #bei ungültigem Pfad kann das Script immer noch im Path stehen und 
-            #trotzdem funktionieren
-                    #TODO: nicht über string lösen...
-            if result[1] == 'kein Gültiger Pfad für zu startendes Script angegeben':
+        if result > 0:
+            if result == 5:
                 if check_in_path(self.entry1.get_text()) == True:
-                    result = True, True
+                    result = 0
                 else:
-                    dialog_fail_create(result[1])
-                    
+                    dialog_fail_create(CHECKVALID_MESSAGES[result])
             else:
-                dialog_fail_create(result[1])
-                
-        if result[0] == True:
+                dialog_fail_create(CHECKVALID_MESSAGES[result])
+            
+        if result == 0:
             create_entry(self.entry1.get_text(),
                          self.entry2.get_text(),
-                         self.entry3.get_text())
+                         self.entry3.get_text(),
+                         self.checkbutton_gameframe.get_active())
             
             if dialog_restart_pinn() == True:
                 p = subprocess.Popen(['killall', 'tiitoo-pinnwand'])
@@ -280,7 +286,11 @@ class MyGUI(object):
                        ' von 168x105 pixeln vorliegen.\n\n',
                        'Der Name des Eintrages kann frei gewählt werden, muss einmalig sein'
                        ' und darf keine Umlaute, Sonderzeichen oder Leerzeichen enthalten.\n',
-                       'Für Ausführlichere Hilfe bitte die Datei README lesen'
+                       'Für Ausführlichere Hilfe bitte die Datei README lesen.\n\n',
+                       'Soll ein Programm/Skript mit dem `tiitoo-gameframe` gestartet werden',
+                       ' kann dies noch nicht mit dem Button `Programmaufruf testen`',
+                       ' ausprobiert werden. Beim Start über die Pinnwand wird später der',
+                       ' Aufruf für das gameframe hinzugefügt.'
                        ])
         display_message('Hilfe zum Iconcreator', msg)
     
@@ -288,6 +298,7 @@ class MyGUI(object):
         """
             Versuchen den Inhalt des Feldes für zu startendem Programm mit 
             subprocess auszuführen.
+            TODO: Aufruf mit gameframe Testen
         """
         if self.entry1.get_text() != '':
                 # wenn ein Argument mitgegeben wurde Aufruf und Argument trennen
@@ -298,16 +309,13 @@ class MyGUI(object):
                 # -> es wurde kein Argument mitgegeben        
             except ValueError:
                 arg_list = [self.entry1.get_text()]
-
             try:
                 p = subprocess.Popen(arg_list,
                                      stdout = subprocess.PIPE,
                                      stderr = subprocess.STDOUT)
                 stdout, _ = p.communicate()
- 
             except OSError, os_exception:
-                    stdout = os_exception.strerror
-                    
+                    stdout = os_exception.strerror        
         else:
             stdout = 'keine Gültigen Eingabedaten'
             

@@ -24,7 +24,7 @@ Für einen neuen Eintrag auf der Pinnwand werden 3 Informationen benötigt.
 
 1. ein zu startendes Skript oder Programm.
 Das zu startende Programm oder Skript kann über den Button 'Datei suchen' gesucht werden oder aber per Hand eingegeben werden. Generell sind hier alle Befehle die in der Shell möglich sind Gültig. Lediglich die Verwendung von Umlauten, Leerzeichen und Sonderzeichen bereitet der Pinnwand Probleme. So kann es passieren das ein Aufruf über den Button 'Programmaufruf testen' zwar Funktioniert, aber ein Aufruf über die Pinnwand fehlschlägt. Der Programmaufruf kann über den Button 'Programmaufruf testen' überprüft werden. Die Rückgabe des Programmaufrufs wird anschließend dem Benutzer ausgegeben.
-Es ist ebenfalls möglich dem Aufruf von Programmen Parameter mitzugeben. 
+Es ist ebenfalls möglich dem Aufruf von Programmen Parameter mitzugeben. Soll das Programm oder Skript mit dem 'tiitoo-gameframe' gestartet werden so ist der Haken bei 'start via gameframe' zu setzen. Momentan ist jedoch noch kein testen des Programmaufrufs über das 'tiitoo-gameframe' möglich. Das 'gameframe' wird lediglich bei Verwendung des späteren Eintrags auf der Pinnwand verwendet. Da nicht alle Programme mit dem 'tiitoo-gameframe' verwendet werden können empfielt es sich vorher auszuprobieren ob das ausgesuchte Programm mit dem 'gameframe' verwendet werden kann.
 
 2. Ein Icon
 Die Icons die verwendet werden sollen müssen im png- Format vorliegen und sollten eine Maximale größte von 186x105 Pixel nicht überschreiten. Die Icons können ebenfalls über den Button 'Datei suchen' im Dateisystem gesucht werden oder direkt in die Eingabezeile eingetragen werden.
@@ -34,13 +34,18 @@ Für jeden Desktopeintrag wird eine separate Datei in dem Verzeichnis
 home/<user>/.appdata/tiitoo-pinnwand/tiitoo-localbookmarks/
 angelegt. Über dieses Feld wird der Name dieser Datei festgelegt. Jeder Dateiname muss einmalig sein, soll keine Sonderzeichen, Leerzeichen oder Sonderzeichen enthalten.
 
-sind alle Informationen zusammengetragen kann ein neuer Eintrag mit dem Button 'Eintrag auf Pinnwand erstellen' angelegt werden.
+
+Sind alle Informationen zusammengetragen kann ein neuer Eintrag mit dem Button 'Eintrag auf Pinnwand erstellen' angelegt werden.
 
 
 
 
 changelog
 ---------
+
+v 0.8 
+    + Option für start mit dem Gameframe hinzugefügt
+    
 v 0.7:
     + neues Icon mit ausliefern
     + Name der Icondatei wird an den Namen der *.desktop Datei angepasst
